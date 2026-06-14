@@ -12,31 +12,16 @@ import {
   NotFound404
 } from '@pages';
 import { Modal } from '../modal';
-import { OrderInfo } from '../order-info';
-import { IngredientDetails } from '../ingredient-details';
-import { ProtectedRoute } from '../protected-route';
+import { OrderInfo } from '@components';
+import { IngredientDetails } from '@components';
+import { ProtectedRoute } from '@components';
 
 export const AppRoutes = () => (
   <Routes>
     <Route path='/' element={<ConstructorPage />} />
     <Route path='/feed' element={<Feed />} />
-
-    <Route
-      path='/login'
-      element={
-        <ProtectedRoute>
-          <Login />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path='/register'
-      element={
-        <ProtectedRoute>
-          <Register />
-        </ProtectedRoute>
-      }
-    />
+    <Route path='/login' element={<Login />} />
+    <Route path='/register' element={<Register />} />
     <Route
       path='/forgot-password'
       element={
