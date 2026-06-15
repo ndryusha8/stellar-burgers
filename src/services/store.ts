@@ -1,5 +1,15 @@
-import {combineReducers, configureStore, createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {TypedUseSelectorHook, useDispatch as dispatchHook, useSelector as selectorHook} from 'react-redux';
+import {
+  combineReducers,
+  configureStore,
+  createAsyncThunk,
+  createSlice,
+  PayloadAction
+} from '@reduxjs/toolkit';
+import {
+  TypedUseSelectorHook,
+  useDispatch as dispatchHook,
+  useSelector as selectorHook
+} from 'react-redux';
 import {
   getFeedsApi,
   getIngredientsApi,
@@ -10,8 +20,8 @@ import {
   orderBurgerApi,
   registerUserApi
 } from '@api';
-import type {TIngredient, TOrder, TOrdersData, TUser} from '@utils-types';
-import {deleteCookie, getCookie} from '../utils/cookie';
+import type { TIngredient, TOrder, TOrdersData, TUser } from '@utils-types';
+import { deleteCookie, getCookie, setCookie } from '../utils/cookie';
 
 type TStatus = 'idle' | 'loading' | 'succeeded' | 'failed';
 
@@ -96,7 +106,8 @@ const initialBurgerConstructorState: BurgerConstructorState = {
 export const fetchIngredients = createAsyncThunk(
   'ingredients/fetchIngredients',
   async () => {
-    return await getIngredientsApi();
+    const data = await getIngredientsApi();
+    return data;
   }
 );
 
@@ -122,6 +133,8 @@ export const login = createAsyncThunk(
   'auth/login',
   async (data: { email: string; password: string }) => {
     const res = await loginUserApi(data);
+    setCookie('accessToken', res.accessToken);
+    localStorage.setItem('refreshToken', res.refreshToken);
     return res.user;
   }
 );
@@ -130,6 +143,8 @@ export const register = createAsyncThunk(
   'auth/register',
   async (data: { email: string; name: string; password: string }) => {
     const res = await registerUserApi(data);
+    setCookie('accessToken', res.accessToken);
+    localStorage.setItem('refreshToken', res.refreshToken);
     return res.user;
   }
 );
