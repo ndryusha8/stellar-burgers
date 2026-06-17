@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 
 import {
   ConstructorPage,
@@ -16,72 +16,87 @@ import { OrderInfo } from '@components';
 import { IngredientDetails } from '@components';
 import { ProtectedRoute } from '@components';
 
-export const AppRoutes = () => (
-  <Routes>
-    <Route path='/' element={<ConstructorPage />} />
-    <Route path='/feed' element={<Feed />} />
-    <Route path='/login' element={<Login />} />
-    <Route path='/register' element={<Register />} />
-    <Route
-      path='/forgot-password'
-      element={
-        <ProtectedRoute>
-          <ForgotPassword />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path='/reset-password'
-      element={
-        <ProtectedRoute>
-          <ResetPassword />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path='/profile'
-      element={
-        <ProtectedRoute>
-          <Profile />
-        </ProtectedRoute>
-      }
-    />
-    <Route
-      path='/profile/orders'
-      element={
-        <ProtectedRoute>
-          <ProfileOrders />
-        </ProtectedRoute>
-      }
-    />
+export const AppRoutes = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const background = location.state?.background;
 
-    <Route
-      path='/feed/:number'
-      element={
-        <Modal title='Информация о заказе' onClose={() => {}}>
-          <OrderInfo />
-        </Modal>
-      }
-    />
-    <Route
-      path='/ingredients/:id'
-      element={
-        <Modal title='Детали ингредиента' onClose={() => {}}>
-          <IngredientDetails />
-        </Modal>
-      }
-    />
-    <Route
-      path='/profile/orders/:number'
-      element={
-        <ProtectedRoute>
-          <Modal title='Информация о заказе' onClose={() => {}}>
-            <OrderInfo />
-          </Modal>
-        </ProtectedRoute>
-      }
-    />
+  const handleModalClose = () => {
+    navigate(-1);
+  };
 
-    <Route path='*' element={<NotFound404 />} />
-  </Routes>
-);
+  return (
+    <>
+      <Routes location={background || location}>
+        <Route path='/' element={<ConstructorPage />} />
+        <Route path='/feed' element={<Feed />} />
+        <Route path='/login' element={<Login />} />
+        <Route path='/register' element={<Register />} />
+        <Route
+          path='/forgot-password'
+          element={
+            <ProtectedRoute>
+              <ForgotPassword />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/reset-password'
+          element={
+            <ProtectedRoute>
+              <ResetPassword />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/profile'
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/profile/orders'
+          element={
+            <ProtectedRoute>
+              <ProfileOrders />
+            </ProtectedRoute>
+          }
+        />
+        <Route path='*' element={<NotFound404 />} />
+      </Routes>
+
+      {background && (
+        <Routes>
+          <Route
+            path='/ingredients/:id'
+            element={
+              <Modal title='Детали ингредиента' onClose={handleModalClose}>
+                <IngredientDetails />
+              </Modal>
+            }
+          />
+          <Route
+            path='/feed/:number'
+            element={
+              <Modal title='Информация о заказе' onClose={handleModalClose}>
+                <OrderInfo />
+              </Modal>
+            }
+          />
+          <Route
+            path='/profile/orders/:number'
+            element={
+              <ProtectedRoute>
+                <Modal title='Информация о заказе' onClose={handleModalClose}>
+                  <OrderInfo />
+                </Modal>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      )}
+    </>
+  );
+};

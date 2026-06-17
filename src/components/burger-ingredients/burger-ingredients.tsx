@@ -1,9 +1,7 @@
 import { useState, useRef, useEffect, FC, useMemo } from 'react';
 import { useInView } from 'react-intersection-observer';
-
 import { useSelector } from '../../services/store';
 import type { RootState } from '../../services/store';
-
 import { TTabMode } from '@utils-types';
 import { BurgerIngredientsUI } from '@ui';
 
@@ -16,7 +14,6 @@ export const BurgerIngredients: FC = () => {
     const buns = ingredients.filter((i) => i.type === 'bun');
     const mains = ingredients.filter((i) => i.type === 'main');
     const sauces = ingredients.filter((i) => i.type === 'sauce');
-
     return { buns, mains, sauces };
   }, [ingredients]);
 

@@ -3,10 +3,32 @@ import React, { FC, memo } from 'react';
 import styles from './feed-info.module.css';
 
 import { FeedInfoUIProps, HalfColumnProps, TColumnProps } from './type';
+import { Preloader } from '@ui';
 
 export const FeedInfoUI: FC<FeedInfoUIProps> = memo(
-  ({ feed, readyOrders, pendingOrders }) => {
+  ({ feed, readyOrders, pendingOrders, isLoading, error }) => {
     const { total, totalToday } = feed;
+
+    if (isLoading) {
+      return <Preloader />;
+    }
+
+    if (error) {
+      return (
+        <div
+          style={{
+            padding: '40px',
+            textAlign: 'center',
+            color: 'var(--colors-interface-error)'
+          }}
+        >
+          <p className='text text_type_main-medium'>Ошибка загрузки данных</p>
+          <p className='text text_type_main-default text_color_inactive mt-2'>
+            {error}
+          </p>
+        </div>
+      );
+    }
 
     return (
       <section>

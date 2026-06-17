@@ -2,7 +2,12 @@ import { Preloader } from '@ui';
 import { ProfileUI } from '@ui-pages';
 import { FC, SyntheticEvent, useEffect, useState } from 'react';
 
-import { fetchUser, useDispatch, useSelector } from '../../services/store';
+import {
+  fetchUser,
+  updateUser,
+  useDispatch,
+  useSelector
+} from '../../services/store';
 
 export const Profile: FC = () => {
   const dispatch = useDispatch();
@@ -33,8 +38,22 @@ export const Profile: FC = () => {
     formValue.email !== user?.email ||
     !!formValue.password;
 
-  const handleSubmit = (e: SyntheticEvent) => {
+  const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
+    if (!user) return;
+
+    const updatedData = {
+      name: formValue.name,
+      email: formValue.email,
+      password: formValue.password || undefined
+    };
+
+    await dispatch(updateUser(updatedData));
+
+    setFormValue((prev) => ({
+      ...prev,
+      password: ''
+    }));
   };
 
   const handleCancel = (e: SyntheticEvent) => {

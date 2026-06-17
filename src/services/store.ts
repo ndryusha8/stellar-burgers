@@ -18,7 +18,8 @@ import {
   loginUserApi,
   logoutApi,
   orderBurgerApi,
-  registerUserApi
+  registerUserApi,
+  updateUserApi
 } from '@api';
 import type { TIngredient, TOrder, TOrdersData, TUser } from '@utils-types';
 import { deleteCookie, getCookie, setCookie } from '../utils/cookie';
@@ -152,6 +153,7 @@ export const register = createAsyncThunk(
 export const logout = createAsyncThunk('auth/logout', async () => {
   await logoutApi();
   deleteCookie('accessToken');
+  localStorage.removeItem('refreshToken');
 });
 
 export const createOrder = createAsyncThunk(
@@ -159,6 +161,23 @@ export const createOrder = createAsyncThunk(
   async (ingredients: string[]) => {
     const res = await orderBurgerApi(ingredients);
     return res.order.number;
+  }
+);
+
+export const updateUser = createAsyncThunk(
+  'auth/updateUser',
+  async (data: { name: string; email: string; password?: string }) => {
+    const payload: { name: string; email: string; password?: string } = {
+      name: data.name,
+      email: data.email
+    };
+
+    if (data.password) {
+      payload.password = data.password;
+    }
+
+    const res = await updateUserApi(payload);
+    return res.user;
   }
 );
 
@@ -269,6 +288,20 @@ const authSlice = createSlice({
       .addCase(register.fulfilled, (state, action: PayloadAction<TUser>) => {
         state.user = action.payload;
         state.isAuthenticated = true;
+      })
+      .addCase(updateUser.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
+      })
+      .addCase(updateUser.fulfilled, (state, action: PayloadAction<TUser>) => {
+        state.status = 'succeeded';
+        state.user = action.payload;
+        state.isAuthenticated = true;
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error =
+          action.error.message || 'Ошибка сохранения данных пользователя';
       })
       .addCase(logout.fulfilled, (state) => {
         state.user = null;

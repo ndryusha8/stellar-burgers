@@ -1,9 +1,14 @@
-import { FC, useMemo, useCallback } from 'react';
+import { FC, useMemo, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from '../../services/store';
 import type { RootState } from '../../services/store';
 import { TConstructorIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
-import { createOrder, clearOrderNumber } from '../../services/store';
+import {
+  createOrder,
+  clearOrderNumber,
+  clearConstructor
+} from '../../services/store';
+import { useNavigate } from 'react-router-dom';
 
 export const BurgerConstructor: FC = () => {
   const dispatch = useDispatch();
@@ -15,7 +20,6 @@ export const BurgerConstructor: FC = () => {
     (state: RootState) => state.orderRequest
   );
 
-  // Приводим номер заказа к типу TOrder (минимально необходимая структура)
   const orderModalData = orderNumber
     ? {
         _id: String(orderNumber),
@@ -28,8 +32,23 @@ export const BurgerConstructor: FC = () => {
       }
     : null;
 
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.isAuthenticated
+  );
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (orderNumber) {
+      dispatch(clearConstructor());
+    }
+  }, [orderNumber, dispatch]);
+
   const onOrderClick = useCallback(() => {
     if (!constructorItems.bun || orderRequest) return;
+    if (!isAuthenticated) {
+      navigate('/login', { replace: true });
+      return;
+    }
 
     const ingredientsIds: string[] = [];
 
@@ -45,7 +64,7 @@ export const BurgerConstructor: FC = () => {
     );
 
     dispatch(createOrder(ingredientsIds));
-  }, [constructorItems, orderRequest, dispatch]);
+  }, [constructorItems, orderRequest, dispatch, isAuthenticated, navigate]);
 
   const closeOrderModal = useCallback(() => {
     dispatch(clearOrderNumber());

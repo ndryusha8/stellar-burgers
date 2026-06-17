@@ -4,6 +4,7 @@ import styles from './constructor-page.module.css';
 import { BurgerIngredients } from '@components';
 import { BurgerConstructor } from '@components';
 import { FC, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import {
   fetchIngredients,
@@ -13,11 +14,19 @@ import {
 
 export const ConstructorPage: FC = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
   const status = useSelector((state) => state.ingredients.status);
 
   useEffect(() => {
     dispatch(fetchIngredients());
   }, [dispatch]);
+
+  const handleIngredientClick = (id: string) => {
+    navigate(`/ingredients/${id}`, {
+      state: { background: location }
+    });
+  };
 
   if (status === 'loading') {
     return (

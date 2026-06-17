@@ -30,6 +30,8 @@ export type TOrdersData = {
   orders: TOrder[];
   total: number;
   totalToday: number;
+  isLoading?: boolean;
+  error?: string | null;
 };
 
 export type TUser = {
