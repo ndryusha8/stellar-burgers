@@ -3,24 +3,16 @@ import styles from './constructor-page.module.css';
 
 import { BurgerIngredients } from '@components';
 import { BurgerConstructor } from '@components';
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-import {
-  fetchIngredients,
-  useDispatch,
-  useSelector
-} from '../../services/store';
+import { useSelector } from '../../services/store';
+import { selectIngredientsStatus } from '../../services/store';
 
 export const ConstructorPage: FC = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const status = useSelector((state) => state.ingredients.status);
-
-  useEffect(() => {
-    dispatch(fetchIngredients());
-  }, [dispatch]);
+  const status = useSelector(selectIngredientsStatus);
 
   const handleIngredientClick = (id: string) => {
     navigate(`/ingredients/${id}`, {

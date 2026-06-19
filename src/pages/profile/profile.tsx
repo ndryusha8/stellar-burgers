@@ -1,19 +1,17 @@
 import { Preloader } from '@ui';
 import { ProfileUI } from '@ui-pages';
 import { FC, SyntheticEvent, useEffect, useState } from 'react';
-
-import {
-  fetchUser,
-  updateUser,
-  useDispatch,
-  useSelector
-} from '../../services/store';
+import { updateUser, useDispatch, useSelector } from '../../services/store';
+import type { RootState } from '../../services/store';
 
 export const Profile: FC = () => {
   const dispatch = useDispatch();
 
-  const user = useSelector((state) => state.auth.user);
-  const status = useSelector((state) => state.auth.status);
+  const user = useSelector((state: RootState) => state.auth.user);
+  const status = useSelector((state: RootState) => state.auth.status);
+  const isAuthChecked = useSelector(
+    (state: RootState) => state.auth.isAuthChecked
+  );
 
   const [formValue, setFormValue] = useState({
     name: user?.name || '',
@@ -22,15 +20,13 @@ export const Profile: FC = () => {
   });
 
   useEffect(() => {
-    dispatch(fetchUser());
-  }, [dispatch]);
-
-  useEffect(() => {
-    setFormValue((prevState) => ({
-      ...prevState,
-      name: user?.name || '',
-      email: user?.email || ''
-    }));
+    if (user) {
+      setFormValue((prevState) => ({
+        ...prevState,
+        name: user?.name || '',
+        email: user?.email || ''
+      }));
+    }
   }, [user]);
 
   const isFormChanged =
@@ -72,7 +68,11 @@ export const Profile: FC = () => {
     }));
   };
 
-  if (status === 'loading') {
+  if (!isAuthChecked || status === 'loading') {
+    return <Preloader />;
+  }
+
+  if (!user) {
     return <Preloader />;
   }
 
