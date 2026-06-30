@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test';
-const URL = process.env.BURGER_API_URL;
+
 test.describe('Конструктор бургера', () => {
   test.beforeEach(async ({ page }) => {
     await page.routeFromHAR('./tests/hars/ingredients.har', {
       url: '**/api/ingredients',
-      update: false,
+      update: false
     });
 
     await page.route('**/api/auth/user', async (route) => {
@@ -26,7 +26,7 @@ test.describe('Конструктор бургера', () => {
           body: JSON.stringify({
             success: true,
             order: { number: 12345 }
-          }),
+          })
         });
       } else {
         await route.continue();
@@ -87,6 +87,8 @@ test.describe('Конструктор бургера', () => {
       .locator('p.text_type_main-default')
       .textContent();
 
+    expect(ingredientName, 'Имя ингредиента не найдено').not.toBeNull();
+
     await ingredient.click();
 
     const modal = page.locator('[data-testid="modal"]');
@@ -97,7 +99,7 @@ test.describe('Конструктор бургера', () => {
     );
 
     await expect(modal.locator('[data-testid="nameIngredient"]')).toContainText(
-      ingredientName
+      ingredientName!
     );
 
     await page.locator('[data-testid="modal-close"]').click();
@@ -105,6 +107,11 @@ test.describe('Конструктор бургера', () => {
 
     await ingredient.click();
     await expect(modal).toBeVisible();
+
+    await expect(modal.locator('[data-testid="nameIngredient"]')).toContainText(
+      ingredientName!
+    );
+
     await page.mouse.click(2, 2);
     await expect(modal).not.toBeVisible();
   });
