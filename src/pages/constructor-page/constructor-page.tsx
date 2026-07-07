@@ -14,12 +14,6 @@ export const ConstructorPage: FC = () => {
   const location = useLocation();
   const status = useSelector(selectIngredientsStatus);
 
-  const handleIngredientClick = (id: string) => {
-    navigate(`/ingredients/${id}`, {
-      state: { background: location }
-    });
-  };
-
   if (status === 'loading') {
     return (
       <main className={styles.containerMain}>

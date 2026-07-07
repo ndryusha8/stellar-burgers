@@ -29,12 +29,14 @@ export const IngredientsCategory = forwardRef<
   }, [burgerConstructor]);
 
   return (
-    <IngredientsCategoryUI
-      title={title}
-      titleRef={titleRef}
-      ingredients={ingredients}
-      ingredientsCounters={ingredientsCounters}
-      ref={ref}
-    />
+    <div data-testid={`category-${title}`}>
+      <IngredientsCategoryUI
+        title={title}
+        titleRef={titleRef}
+        ingredients={ingredients}
+        ingredientsCounters={ingredientsCounters}
+        ref={ref}
+      />
+    </div>
   );
 });
